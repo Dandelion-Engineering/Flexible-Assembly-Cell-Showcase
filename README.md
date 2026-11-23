@@ -5,10 +5,17 @@
 
 ## Watch the revised automation pass
 
-| Run | What to look for |
-| --- | --- |
-| [![Variant A at a lid screw](media/revised-a-poster.jpg)](media/revised-a-pass.mp4) [Variant A · full passing run · 1:27](media/revised-a-pass.mp4) | The arm loads the housing, fits the lid, swaps tools, seats four screws, inspects the assembly, and delivers it. |
-| [![Variant B with its internal carrier exposed](media/revised-b-poster.jpg)](media/revised-b-pass.mp4) [Variant B · full passing run · 2:12](media/revised-b-pass.mp4) | The same arm adds a carrier before closing the housing. Watch it fasten and inspect the two layers at the same station. |
+### Variant A: full passing run (1:27)
+
+The arm loads the housing, fits the lid, swaps tools, seats four screws, inspects the assembly, and delivers it.
+
+https://github.com/user-attachments/assets/444dbbac-cb1a-4507-b584-68e3734d185e
+
+### Variant B: full passing run (2:12)
+
+The same arm adds a carrier before closing the housing. Watch it fasten and inspect the two layers at the same station.
+
+https://github.com/user-attachments/assets/97be9ca1-180c-406a-9c25-bf2e51082d81
 
 **Both revised programs passed 20 out of 20 fresh simulated jobs with no agent in the loop.** The test sequence was 10 A, 20 B, then 10 A again. One B attempt was interrupted before grading. The same setup passed on restart. The totals count one scored result per planned job.
 
@@ -24,8 +31,13 @@ We call the agent that authored the programs **Robot Codex** and the one that pr
 
 The original programs passed 18 of 20 scored runs. A passed 8/10 and B passed 10/10. In two A runs, the simulated driver kept turning while the screw barely moved. The screw later resumed turning, but the routine ran out of time before the head seated. It was the first lid screw in one run and the last in the other.
 
-- [First lid screw · original failure, T04-18-A · 3.8 s](media/original-a-first-screw-fail.mp4)
-- [Last lid screw · original failure, T04-20-A · 3.8 s](media/original-a-last-screw-fail.mp4)
+### First lid screw failure (3.8 s)
+
+https://github.com/user-attachments/assets/fa9453fd-4307-44be-822d-21a906ab65f8
+
+### Last lid screw failure (3.8 s)
+
+https://github.com/user-attachments/assets/c3186169-71dc-48b7-9be5-298705000a60
 
 Watch the close-up on the right. About 1.4 seconds into each clip the screw makes little visible progress, then starts moving again. The last frame captures the stop. The [before-and-after tests](evidence/README.md#the-two-matched-setups) explain what was happening even when it’s hard to see in the clip.
 
