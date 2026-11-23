@@ -37,6 +37,6 @@ All tests were in simulation. They show what happened in these setups, not how o
 | [First screw failure](../media/original-a-first-screw-fail.mp4) | A 3.8-second cut from the original failure, job `T04-18-A`. |
 | [Last screw failure](../media/original-a-last-screw-fail.mp4) | A 3.8-second cut from the original failure, job `T04-20-A`. |
 
-The failure clips are continuous cuts through the moment each job stopped, not footage from the later replays. Watch the close-up on the right to see the screw pause and then move again. The rotation rates and gaps above come from simulation measurements, not estimates from the video. The two posters are stills from the passing runs.
+The failure clips are continuous cuts through the moment each job stopped, not footage from the later replays. Watch the close-up on the right to see the screw pause and then move again. The rotation rates and gaps above come from simulation measurements, not estimates from the video. Each preview image is a still from its video.
 
 [Original and revised programs](../programs/README.md) · [Optional checksums](../SHA256SUMS)

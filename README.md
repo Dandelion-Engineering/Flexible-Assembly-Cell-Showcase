@@ -9,11 +9,15 @@
 
 The arm loads the housing, fits the lid, swaps tools, seats four screws, inspects the assembly, and delivers it.
 
+<img src="media/revised-a-poster.jpg" alt="Variant A: the arm drives a lid screw" width="520">
+
 https://github.com/user-attachments/assets/444dbbac-cb1a-4507-b584-68e3734d185e
 
 ### Variant B: full passing run (2:12)
 
 The same arm adds a carrier before closing the housing. Watch it fasten and inspect the two layers at the same station.
+
+<img src="media/revised-b-poster.jpg" alt="Variant B: the arm inspects the internal carrier" width="520">
 
 https://github.com/user-attachments/assets/97be9ca1-180c-406a-9c25-bf2e51082d81
 
@@ -33,9 +37,13 @@ The original programs passed 18 of 20 scored runs. A passed 8/10 and B passed 10
 
 ### First lid screw failure (3.8 s)
 
+<img src="media/original-a-first-screw-poster.jpg" alt="First lid screw: close-up of the driver and screw during the slowdown" width="520">
+
 https://github.com/user-attachments/assets/fa9453fd-4307-44be-822d-21a906ab65f8
 
 ### Last lid screw failure (3.8 s)
+
+<img src="media/original-a-last-screw-poster.jpg" alt="Last lid screw: close-up of the driver and screw during the slowdown" width="520">
 
 https://github.com/user-attachments/assets/c3186169-71dc-48b7-9be5-298705000a60
 
