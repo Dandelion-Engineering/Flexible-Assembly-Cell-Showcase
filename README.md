@@ -1,0 +1,56 @@
+# Flexible Assembly Cell
+
+
+*The walkthrough and file guide below were written by dot, Randy Crespo’s AI assistant. Robot Codex wrote the assembly programs. Dev Codex prepared the simulator and ran the independent tests.*
+
+## Watch the revised automation pass
+
+| Run | What to look for |
+| --- | --- |
+| [![Variant A at a lid screw](media/revised-a-poster.jpg)](media/revised-a-pass.mp4) [Variant A · full passing run · 1:27](media/revised-a-pass.mp4) | The arm loads the housing, fits the lid, swaps tools, seats four screws, inspects the assembly, and delivers it. |
+| [![Variant B with its internal carrier exposed](media/revised-b-poster.jpg)](media/revised-b-pass.mp4) [Variant B · full passing run · 2:12](media/revised-b-pass.mp4) | The same arm adds a carrier before closing the housing. Watch it fasten and inspect the two layers at the same station. |
+
+**Both revised programs passed 20 out of 20 fresh simulated jobs with no agent in the loop.** The test sequence was 10 A, 20 B, then 10 A again. One B attempt was interrupted before grading. The same setup passed on restart. The totals count one scored result per planned job.
+
+## First, give Codex the cell
+
+The experiment started with a simulated workcell, one arm, and two versions of a product. Randy wanted to see what Codex could do with the kinds of things an automation developer starts from. It had a station, interfaces for operating it, and a description of the finished job.
+
+An early version of the experiment let Codex assemble a recipe from operations the station already offered. That left a more interesting question. **Could it write the operations needed to run the job?** In the second version the starter supplied the simulated station, specifications, and lower-level commands and observations. The assignment was to write the A and B assembly routines using those interfaces. The underlying arm control and physics were already in place.
+
+We call the agent that authored the programs **Robot Codex** and the one that prepared and independently evaluated the test setup **Dev Codex**. The authoring session was asked to work from the starter and its own attempts. We don’t claim the session was provably blind. For the independent evaluation, Dev Codex verified the exact submitted programs and ran them against its own pinned simulator and grader. The simulator executed those trials unattended.
+
+## Two screws told a better story than eighteen passes
+
+The original programs passed 18 of 20 scored runs. A passed 8/10 and B passed 10/10. In two A runs, the simulated driver kept turning while the screw barely moved. The screw later resumed turning, but the routine ran out of time before the head seated. It was the first lid screw in one run and the last in the other.
+
+- [First lid screw · original failure, T04-18-A · 3.8 s](media/original-a-first-screw-fail.mp4)
+- [Last lid screw · original failure, T04-20-A · 3.8 s](media/original-a-last-screw-fail.mp4)
+
+Watch the close-up on the right. About halfway through each clip the screw makes little visible progress, then starts moving again. The last frame captures the stop. The [independent measurements](evidence/README.md#the-two-matched-setups) show how far the driver and screw turned and how much gap remained under each screw head.
+
+Watching the bit spin looked like watching the screw go in, until it wasn’t. The original routine advanced the arm according to how far the driver turned. Those two things usually tracked each other. During slip, they didn’t. The test showed where that assumption broke. The underlying cause of every slowdown is still open.
+
+## Tell the agent what failed
+
+Randy described the failure to Robot Codex and left the diagnosis and repair to it. Robot Codex looked for the same behavior in B and found that it could happen there too, even though the B runs had passed. It revised both programs so feed tracks the screw’s measured progress. It also made its seating checks more specific.
+
+Dev Codex then tried the two exact A setups again, once with the original program and once with the revised one. **The old program failed both times. The revised program seated the screw and finished both jobs.** Those four runs were separate from the 40 fresh jobs.
+
+| Exact setup | Original A | Revised A |
+| --- | --- | --- |
+| First lid screw | Reproduced the seating failure | Passed |
+| Last lid screw | Reproduced the seating failure | Passed |
+
+## What the tests show
+
+An agent wrote and revised routines that a conventional automation runner could execute on its own. The interesting part is the handoff. The agent can leave, and the work keeps running. The independent tests also show why “it worked once” is a poor stopping point. They found a failure mode the initial successes hadn’t revealed, and the matching replays showed what the revision changed.
+
+The results cover the simulated workcell and the tested setups. All trials ran in simulation. The files here document those trials.
+
+## Explore the evidence
+
+- [Exact revised assembly programs](programs/)
+- [Test summary and media provenance](evidence/)
+- [Third-party sources and notices](THIRD_PARTY_NOTICES.md)
+- [License scope](LICENSE.md)
