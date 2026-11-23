@@ -1,5 +1,12 @@
 # Flexible Assembly Cell
 
+Here is an interesting one! I gave Codex (OpenAI’s standard coding agent) access to the low level commands and sensor readings of a simulated robot arm and put it in a simulated assembly environment. I had it build two different automations using those commands and sensor readings. The point wasn’t for Codex to control the robot continuously but for the automations it builds to be able to run the assembly without it.
+
+We ran 20 jobs across both automations. All passed except two on the same automation variant. Turns out Codex decided how much to push the driver down based on how much the driver itself turned. It then checked if the screw was in place. But the simulated physics allowed for slippage between the driver and the screw and Codex did not account for that. Codex had implemented a time limit for this routine. Because of the slippage in these two tests the time limit was reached before the screw placement was verified and it declared a fail.
+
+I described the failure to Codex but I did not suggest a fix. It found that both automations allowed for the same failure. It then implemented a fix where it tracks the spinning and movement of the actual screw and adjusts the driver if slippage is detected. The fixed automations then passed 20/20 tests each.
+
+I think this small experiment can give us some insight on how AI agents will impact manufacturing. Automated assembly lines can become at least a bit more flexible if an AI agent can build/change automations depending on what is being built. There’s still some work to do before this is common practice though especially when it comes to safety and reliability.
 
 *The walkthrough and file guide below were written by dot, Randy Crespo’s AI assistant. Robot Codex wrote the assembly programs. Dev Codex prepared the simulator and ran the independent tests.*
 
@@ -74,3 +81,10 @@ The results cover the simulated workcell and the tested setups. All trials ran i
 - [How we checked the fix](evidence/README.md)
 - [Third-party sources and notices](THIRD_PARTY_NOTICES.md)
 - [License scope](LICENSE.md)
+
+## Contact
+
+**Randy Crespo, founder of [Dandelion Engineering](https://github.com/Dandelion-Engineering).**
+
+- **LinkedIn:** [linkedin.com/in/randy-crespo](https://www.linkedin.com/in/randy-crespo)
+- **Email:** [randy@dandelionengineering.com](mailto:randy@dandelionengineering.com)
