@@ -1,19 +1,23 @@
-# Third-party notices
+# Credits and third-party notices
 
-## Assets depicted in the recordings
+*Written by dot, Randy Crespo’s AI assistant.*
 
-- **Universal Robots UR5e model and meshes.** The arm was rendered from the Google DeepMind MuJoCo Menagerie model at commit `32224735cf004df068cd29ba099459f71bcd7d21`. The 20 OBJ visual meshes used by the evaluator match the pinned originals. Menagerie documents their derivation from the ROS-Industrial UR5e DAE visuals. The workcell adapted the arm hierarchy, placement, servo tuning, contact masks and flange attachment, and used the upstream visuals. The model’s BSD 3-Clause notice credits the ROS Industrial Consortium and is retained in full with the rendered material. The model and mesh files themselves are external. [Pinned model source and derivation](https://github.com/google-deepmind/mujoco_menagerie/tree/32224735cf004df068cd29ba099459f71bcd7d21/universal_robots_ur5e) · [Menagerie license at the pin](https://github.com/google-deepmind/mujoco_menagerie/blob/32224735cf004df068cd29ba099459f71bcd7d21/LICENSE) · [Retained UR5e BSD 3-Clause notice](licenses/UR5e-BSD-3-Clause.txt)
-- **Recording labels.** Sora Sagano’s Aileron Regular is visible in the original job and simulated-time labels. The renderer used the TrueType subset shipped as Pillow 11.3.0’s FreeType-backed default. Its internal font version is 1.102, from the designer’s 0.102 release. The font is dedicated under CC0 1.0. The showcase contains rendered labels. [Designer’s Aileron release](https://dotcolon.net/fonts/aileron/) · [Pillow’s font source at 11.3.0](https://github.com/python-pillow/Pillow/blob/11.3.0/src/PIL/ImageFont.py) · [Subset provenance](https://github.com/python-pillow/Pillow/pull/7354) · [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/)
-- **Other visible material.** The workcell, tooling, product and generated scene textures are from Dandelion Engineering’s project. The two posters are stills from the passing videos. The four videos are silent. See [the media provenance](evidence/README.md#media-provenance) for edits, cuts and source jobs.
+This showcase includes four assembly programs, videos, and still images. It does not ship the simulator, a copy of the robot model, or any of the software used to record the videos.
 
-## External software used
+## What you see in the videos
 
-| Component | Version and upstream terms |
-| --- | --- |
-| MuJoCo | 3.3.7, Apache-2.0. The pinned evaluator used it for simulation and rendering. Its separately installed wheel has additional bundled-component notices. [Release](https://github.com/google-deepmind/mujoco/releases/tag/3.3.7) · [License](https://github.com/google-deepmind/mujoco/blob/3.3.7/LICENSE) · [Wheel notices](https://pypi.org/project/mujoco/3.3.7/#third-party-licenses) |
-| CPython | 3.12.10, Python Software Foundation License and historical notices. [Pinned source and license](https://github.com/python/cpython/blob/v3.12.10/LICENSE) |
-| Pillow | 11.3.0, MIT-CMU (the Pillow and PIL licenses). It composited the original rendered views and their labels. [Pinned source and license](https://github.com/python-pillow/Pillow/blob/11.3.0/LICENSE) |
-| imageio-ffmpeg | 0.6.0, BSD 2-Clause for the wrapper used by the original recorder. [Pinned source and license](https://github.com/imageio/imageio-ffmpeg/blob/v0.6.0/LICENSE) |
-| FFmpeg and x264 | FFmpeg 7.1 Windows essentials build from Gyan, GPL v3 or later for this build, with x264 core 164 r3192 (`c24e06c2e184345ceb33eb20a15d1024d9fd3497`, GPL-2.0-or-later). This build encoded the original movies and was used to cut and check the clips. [FFmpeg 7.1 source and terms](https://github.com/FFmpeg/FFmpeg/blob/n7.1/LICENSE.md) · [Windows build provider](https://www.gyan.dev/ffmpeg/builds/) · [x264 pinned revision](https://code.videolan.org/videolan/x264/-/commit/c24e06c2e184345ceb33eb20a15d1024d9fd3497) |
+- **The arm** is a simulated Universal Robots UR5e. The cell uses the [UR5e model from MuJoCo Menagerie](https://github.com/google-deepmind/mujoco_menagerie/tree/32224735cf004df068cd29ba099459f71bcd7d21/universal_robots_ur5e), which credits ROS-Industrial for the original visuals. The project kept the upstream visual meshes but adapted the arm’s placement, hierarchy, servo settings, contact masks, and tool attachment for this cell. See the [Menagerie license](https://github.com/google-deepmind/mujoco_menagerie/blob/32224735cf004df068cd29ba099459f71bcd7d21/LICENSE) and the [full UR5e BSD 3-Clause notice](licenses/UR5e-BSD-3-Clause.txt).
+- **The labels** use [Aileron Regular](https://dotcolon.net/fonts/aileron/) by Sora Sagano, under [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/). They’re drawn into the video, not distributed as a separate font file. Pillow 11.3.0 used its [bundled font subset](https://github.com/python-pillow/Pillow/blob/11.3.0/src/PIL/ImageFont.py), based on the designer’s 0.102 release (internal version 1.102; [subset details](https://github.com/python-pillow/Pillow/pull/7354)).
+- **The rest of the cell** (the tooling, product, and generated scene textures) comes from Dandelion Engineering’s project. The clips are silent, and the two posters are stills from passing runs. [See where the videos came from](evidence/README.md#where-the-videos-came-from).
 
-The showcase ships the two task routines, the walkthrough, the evidence summary, the rendered media and the UR5e notice. The routines use the project’s separate simulator interfaces. They contain no third-party imports or attributed upstream source. The external software and its dependencies were used in the evaluator or media preparation and are distributed separately by their upstream projects.
+## Tools used, not bundled
+
+| Tool | What it did | Upstream terms |
+| --- | --- | --- |
+| MuJoCo 3.3.7 | Ran the physics and rendered the cell. | [Apache-2.0](https://github.com/google-deepmind/mujoco/blob/3.3.7/LICENSE); [wheel notices](https://pypi.org/project/mujoco/3.3.7/#third-party-licenses). |
+| CPython 3.12.10 | Ran the evaluator. | [Python Software Foundation License and historical notices](https://github.com/python/cpython/blob/v3.12.10/LICENSE). |
+| Pillow 11.3.0 | Put the camera views and labels together. | [MIT-CMU (Pillow and PIL licenses)](https://github.com/python-pillow/Pillow/blob/11.3.0/LICENSE). |
+| imageio-ffmpeg 0.6.0 | Connected the recording code to the video encoder. | [BSD 2-Clause](https://github.com/imageio/imageio-ffmpeg/blob/v0.6.0/LICENSE). |
+| FFmpeg 7.1 with x264 core 164 r3192 | Encoded the videos and cut and checked the clips. | [FFmpeg terms](https://github.com/FFmpeg/FFmpeg/blob/n7.1/LICENSE.md) (GPL v3 or later for the [Windows essentials build](https://www.gyan.dev/ffmpeg/builds/)); [x264 source](https://code.videolan.org/videolan/x264/-/commit/c24e06c2e184345ceb33eb20a15d1024d9fd3497) (GPL-2.0-or-later). |
+
+The four programs call the cell’s existing interfaces. They don’t bundle the simulator or import third-party code. [What you can reuse](LICENSE.md)

@@ -27,13 +27,13 @@ The original programs passed 18 of 20 scored runs. A passed 8/10 and B passed 10
 - [First lid screw · original failure, T04-18-A · 3.8 s](media/original-a-first-screw-fail.mp4)
 - [Last lid screw · original failure, T04-20-A · 3.8 s](media/original-a-last-screw-fail.mp4)
 
-Watch the close-up on the right. About 1.4 seconds into each clip the screw makes little visible progress, then starts moving again. The last frame captures the stop. The [independent measurements](evidence/README.md#the-two-matched-setups) show how far the driver and screw turned and how much gap remained under each screw head.
+Watch the close-up on the right. About 1.4 seconds into each clip the screw makes little visible progress, then starts moving again. The last frame captures the stop. The [before-and-after tests](evidence/README.md#the-two-matched-setups) explain what was happening even when it’s hard to see in the clip.
 
 Watching the bit spin looked like watching the screw go in, until it wasn’t. The original routine advanced the arm according to how far the driver turned. Those two things usually tracked each other. During slip, they didn’t. The test showed where that assumption broke. The underlying cause of every slowdown is still open.
 
 ## Tell the agent what failed
 
-Randy described the failure to Robot Codex and left the diagnosis and repair to it. Robot Codex looked for the same behavior in B and found that it could happen there too, even though the B runs had passed. It revised both programs so feed tracks the screw’s measured progress. It also made its seating checks more specific.
+Randy described the failure to Robot Codex and left the diagnosis and repair to it. Robot Codex looked for the same behavior in B and found that it could happen there too, even though the B runs had passed. In both programs, it changed what the arm listens to. Instead of advancing with the driver’s turns, it watches how far the screw itself turns and descends. It also made its seating checks more specific. You can [read both submissions side by side](programs/README.md#open-the-submissions-side-by-side).
 
 Dev Codex then tried the two exact A setups again, once with the original program and once with the revised one. **The old program failed both times. The revised program seated the screw and finished both jobs.** Those four runs were separate from the 40 fresh jobs.
 
@@ -50,7 +50,7 @@ The results cover the simulated workcell and the tested setups. All trials ran i
 
 ## Explore the evidence
 
-- [Exact revised assembly programs](programs/)
-- [Test summary and media provenance](evidence/)
+- [Original and revised assembly programs](programs/README.md)
+- [How we checked the fix](evidence/README.md)
 - [Third-party sources and notices](THIRD_PARTY_NOTICES.md)
 - [License scope](LICENSE.md)

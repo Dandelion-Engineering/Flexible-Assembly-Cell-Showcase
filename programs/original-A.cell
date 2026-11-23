@@ -1,0 +1,375 @@
+# All coordinates are in metres. The master enters the rack vertically.
+# With a tool attached the approach is through the south opening in the fork.
+def xyz(name):
+    return pose(name)["xyz"]
+
+def up(p, dz):
+    return add(p, [0, 0, dz])
+
+def move_to(p, yaw):
+    move(p, yaw, 0.40, 0.10)
+
+def trim(name, goal, yaw):
+    for i in range(4):
+        delta = sub(goal, xyz(name))
+        if norm(delta) < 0.000035:
+            break
+        c = state()["command"]
+        move(add(c, delta), yaw, 0.035, 0.16)
+
+def rack_x(tool):
+    if tool == "gripper":
+        return 0.285
+    return 0.440
+
+def pick_tool(tool):
+    x = rack_x(tool)
+    p = xyz(tool)
+    move_to([x, 0.165, 0.465], 0)
+    move(up(p, 0.012), 0, 0.28, 0.10)
+    move(p, 0, 0.035, 0.2)
+    trim("port", p, 0)
+    coil("lock_" + tool, True)
+    coil("dock_" + tool, False)
+    move([x, 0.165, 0.2884], 0, 0.025, 0.12)
+    move([x, 0.050, 0.2884], 0, 0.17, 0.12)
+    move_to([x, 0.050, 0.478], 0)
+    move_to([x, 0.335, 0.478], 0)
+
+def park_tool(tool):
+    x = rack_x(tool)
+    move_to([x, 0.335, 0.478], 0)
+    move_to([x, 0.050, 0.478], 0)
+    front = [x, 0.050, 0.2884]
+    move_to(front, 0)
+    trim(tool, front, 0)
+    # Clear the top of the fork with the collar before lowering onto the ledge.
+    move([x, 0.165, 0.2884], 0, 0.13, 0.21)
+    p = [x, 0.165, 0.28605]
+    trim(tool, p, 0)
+    coil("dock_" + tool, True)
+    coil("lock_" + tool, False)
+    move_to(up(p, 0.150), 0)
+
+def jaws(stroke):
+    axis("jaw0", stroke)
+    axis("jaw1", stroke)
+
+def take_housing():
+    axis("vacuum_retract", 0.033)
+    jaws(-0.002)
+    p = xyz("housing0")
+    a = pose("housing0")["yaw"]
+    move_to(up(p, 0.315), a)
+    move(up(p, 0.182), a, 0.22, 0.16)
+    jaws(0.003)
+    hold(0.22)
+    if not touch("geom/jaw_face0", "body/housing0") or not touch("geom/jaw_face1", "body/housing0"):
+        fail("Housing jaw contact")
+    coil("grasp_housing0", True)
+    return a
+
+def lift(z, yaw):
+    p = xyz("port")
+    move([p[0], p[1], z], yaw, 0.22, 0.13)
+
+def place_part(name, goal, yaw, clearance):
+    delta = sub(up(goal, clearance), xyz(name))
+    move_to(add(state()["command"], delta), yaw)
+    delta = sub(up(goal, 0.002), xyz(name))
+    move(add(state()["command"], delta), yaw, 0.16, 0.16)
+    trim(name, goal, yaw)
+
+def fixture_readings():
+    pose("housing0")
+    for i in range(2):
+        encoder("clamp" + str(i))
+        touch("geom/clamp_pad" + str(i), "body/housing0")
+    for i in range(3):
+        touch("geom/datum" + str(i), "body/housing0")
+        touch("geom/rest" + str(i), "body/housing0")
+
+def clamps(stroke):
+    axis("clamp0", stroke)
+    axis("clamp1", stroke)
+
+def supported():
+    for i in range(3):
+        if not touch("geom/rest" + str(i), "body/housing0") or not touch("geom/datum" + str(i), "body/housing0"):
+            return False
+    for i in range(2):
+        if not touch("geom/clamp_pad" + str(i), "body/housing0"):
+            return False
+    return state()["fixture"]
+
+def preclose():
+    clamps(0.00765)
+    hold(0.16)
+    for i in range(12):
+        clamps(0.00769 + i * 0.000035)
+        hold(0.024)
+    # The north clamp acts close to the eastmost of the two south datums.
+    # Its larger preload keeps the opposite end of the south face in contact.
+    for i in range(18):
+        axis("clamp0", 0.008075)
+        axis("clamp1", 0.00809 + i * 0.000065)
+        hold(0.024)
+
+def confirm_closure():
+    for i in range(7):
+        axis("clamp0", 0.008075 + i * 0.000013)
+        axis("clamp1", 0.0092 + i * 0.00018)
+        hold(0.20)
+        fixture_readings()
+        if supported():
+            hold(0.20)
+            if supported():
+                return True
+    return False
+
+def nest_angle():
+    d = sub(xyz("datum2"), xyz("datum1"))
+    return atan2(d[1], d[0])
+
+def nest_center(a):
+    east = [cos(a), sin(a), 0]
+    north = [-sin(a), cos(a), 0]
+    dx = dot(xyz("datum0"), east) + 0.003 + 0.080
+    dy = dot(xyz("datum1"), north) + 0.003 + 0.055
+    z = (xyz("rest0")[2] + xyz("rest1")[2] + xyz("rest2")[2]) / 3 + 0.0045
+    return up(add(scale(east, dx), scale(north, dy)), z)
+
+def load_fixture():
+    angle = nest_angle()
+    center = nest_center(angle)
+    for attempt in range(2):
+        a = take_housing()
+        lift(0.323, a)
+        p = add(center, [0.00022, 0.00022, 0.000025])
+        yaw = state()["yaw"] + angle - pose("housing0")["yaw"]
+        place_part("housing0", up(p, 0.008), yaw, 0.055)
+        hold(0.20)
+        yaw = state()["yaw"] + angle - pose("housing0")["yaw"]
+        move(state()["command"], yaw, 0.02, 0.18)
+        trim("housing0", up(p, 0.008), yaw)
+        delta = sub(p, xyz("housing0"))
+        move(add(state()["command"], delta), yaw, 0.017, 0.20)
+        # Slide the supported housing square to the stops with the jaws closed.
+        target = add(center, [-0.000008, -0.000008, -0.000008])
+        delta = sub(target, xyz("housing0"))
+        move(add(state()["command"], delta), yaw, 0.0015, 0.20)
+        fixture_readings()
+        preclose()
+        coil("grasp_housing0", False)
+        jaws(-0.002)
+        hold(0.18)
+        lift(0.31, yaw)
+        if confirm_closure():
+            return
+        axis("clamp0", 0)
+        axis("clamp1", 0)
+        hold(0.22)
+    fail("Fixture did not close")
+
+def place_plate(name, height):
+    jaws(-0.002)
+    axis("vacuum_retract", 0)
+    p = xyz(name)
+    a = pose(name)["yaw"]
+    move_to(up(p, 0.290), a)
+    move(up(p, 0.166), a, 0.17, 0.14)
+    # Bring the three spring-loaded cups into contact with the top face.
+    for i in range(13):
+        if touch("geom/cup0", "body/" + name) and touch("geom/cup1", "body/" + name) and touch("geom/cup2", "body/" + name):
+            break
+        move(up(state()["command"], -0.00020), a, 0.020, 0.055)
+    coil("grasp_" + name, True)
+    lift(0.314, a)
+    yaw = state()["yaw"] + pose("housing0")["yaw"] - pose(name)["yaw"]
+    goal = point("housing0", [0, 0, height + 0.00002])
+    place_part(name, goal, yaw, 0.056)
+    coil("grasp_" + name, False)
+    hold(0.10)
+    lift(0.335, yaw)
+    hold(0.12)
+    if norm(sub(xyz(name), point("housing0", [0, 0, height]))) > 0.00048:
+        fail("Plate did not seat: " + name)
+
+def pick_screw(s):
+    p = point(s, [0, 0, 0.00135])
+    move_to(up(p, 0.255), 0)
+    move(up(p, 0.182), 0, 0.22, 0.16)
+    trim("bit_end", p, 0)
+    coil("bit_" + s, True)
+    lift(0.320, 0)
+
+def insert_thread(plate, x, y):
+    if plate == "carrier0":
+        if x < 0:
+            return "geom/housing0_1_0_thread"
+        return "geom/housing0_1_1_thread"
+    if x < 0 and y < 0:
+        return "geom/housing0_0_0_thread"
+    if x > 0 and y > 0:
+        return "geom/housing0_0_1_thread"
+    if x > 0:
+        return "geom/housing0_0_2_thread"
+    return "geom/housing0_0_3_thread"
+
+def approach_insert(s, plate, x, y, height):
+    entry = point("housing0", [x, y, height + 0.008])
+    bore = point(plate, [x, y, 0])
+    # Align the shaft in free space, above both the plate and insert.
+    move_to(up(entry, 0.22535), 0)
+    for fraction in [0.5, 0.85, 0.15]:
+        cx = entry[0] + fraction * (bore[0] - entry[0])
+        cy = entry[1] + fraction * (bore[1] - entry[1])
+        align = [cx, cy, entry[2] + 0.0065]
+        move(up(align, 0.18335), 0, 0.10, 0.22)
+        trim("bit_end", up(align, 0.00135), 0)
+        trim(s, align, 0)
+        p = xyz(s)
+        # Keep the horizontal setpoint fixed throughout insertion.
+        dz = entry[2] - p[2]
+        move(up(state()["command"], dz), 0, 0.008, 0.18)
+        p = xyz(s)
+        dx = p[0] - entry[0]
+        dy = p[1] - entry[1]
+        if sqrt(dx*dx + dy*dy) < 0.00018 and abs(p[2] - entry[2]) < 0.00032 and pose(s)["axes"][2][2] > cos(radians(1.5)):
+            return
+        # Withdraw straight up before changing lateral position for a retry.
+        move(up(align, 0.18335), 0, 0.035, 0.20)
+    fail("Screw did not enter the bore squarely")
+
+def drive(index, plate, x, y, height):
+    s = "screw" + str(index)
+    pick_screw(s)
+    approach_insert(s, plate, x, y, height)
+    if not state()["fixture"]:
+        fail("Fixture lost before fastening")
+    top = point(plate, [x, y, 0.003])
+    start = state()["command"]
+    dz = xyz(s)[2] - top[2]
+    # Clockwise from above. Feed one pitch for each spindle revolution.
+    thread = insert_thread(plate, x, y)
+    zero = encoder("spindle")
+    axis("spindle", -25.13274123)
+    seated = False
+    for i in range(490):
+        angle = abs(encoder("spindle") - zero)
+        feed = min(dz + 0.00022, 0.0005 * angle / 6.283185307 + 0.00010)
+        servo(up(start, -feed), 0, 0.008)
+        if i % 16 == 0:
+            touch("geom/" + s + "_thread", thread)
+            pose(s)
+            state()
+        if i % 4 == 0 and touch("geom/" + s + "_head", "body/" + plate):
+            seated = True
+            pose(s)
+            state()
+            touch("geom/" + s + "_thread", thread)
+            hold(0.016)
+            break
+    axis("spindle", 0)
+    if not seated:
+        fail("No head bearing on " + plate + " for " + s)
+    hold(0.05)
+    coil("bit_" + s, False)
+    lift(0.320, 0)
+
+def inspect_at(body, local, mesh):
+    p = point(body, local)
+    d = sub(p, xyz("inspection"))
+    shot = ray(d)
+    if not shot["in_frame"] or shot["body"] != body or shot["mesh"] != mesh:
+        fail("Optical inspection at " + body + " expected " + mesh)
+
+def inspect_head(index):
+    inspect_at("screw" + str(index), [0, 0, 0.0024], "cad_screw")
+
+def close_lid(first):
+    place_plate("lid0", 0.044)
+    park_tool("gripper")
+    pick_tool("driver")
+    drive(first, "lid0", -0.068, -0.043, 0.044)
+    drive(first + 1, "lid0", 0.068, 0.043, 0.044)
+    drive(first + 2, "lid0", 0.068, -0.043, 0.044)
+    drive(first + 3, "lid0", -0.068, 0.043, 0.044)
+    park_tool("driver")
+    for i in range(4):
+        inspect_head(first + i)
+
+def check_stack(part, height, limit):
+    center = xyz(part)
+    expected = point("housing0", [0, 0, height])
+    if norm(sub(center, expected)) > 0.00055:
+        fail("Stack position outside tolerance for " + part)
+    q = pose(part)["quat"]
+    r = pose("housing0")["quat"]
+    product = abs(q[0]*r[0] + q[1]*r[1] + q[2]*r[2] + q[3]*r[3])
+    if 2 * acos(min(1, product)) > radians(limit):
+        fail("Stack orientation outside tolerance for " + part)
+
+def check_screw(index, x, y, height):
+    s = "screw" + str(index)
+    origin = xyz(s)
+    target = point("housing0", [x, y, height])
+    delta = sub(origin, target)
+    z = sub(point("housing0", [0, 0, 1]), xyz("housing0"))
+    axial = dot(delta, z)
+    if abs(axial) > 0.00015 or norm(sub(delta, scale(z, axial))) > 0.00023:
+        fail("Screw position outside tolerance for " + s)
+    axis_z = sub(point(s, [0, 0, 1]), origin)
+    if dot(z, axis_z) < cos(radians(2)):
+        fail("Screw tilt outside tolerance for " + s)
+
+def final_measurements(first):
+    delta = sub(xyz("housing0"), point("output_tray0", [0, 0, 0.005]))
+    if abs(delta[2]) > 0.00048 or sqrt(delta[0]*delta[0] + delta[1]*delta[1]) > 0.00135:
+        fail("Housing outside the output pocket tolerance")
+    check_stack("lid0", 0.044, 0.22)
+    if first == 2:
+        check_stack("carrier0", 0.016, 0.30)
+        check_screw(0, -0.036, -0.017, 0.019)
+        check_screw(1, 0.036, 0.017, 0.019)
+    check_screw(first, -0.068, -0.043, 0.047)
+    check_screw(first + 1, 0.068, 0.043, 0.047)
+    check_screw(first + 2, 0.068, -0.043, 0.047)
+    check_screw(first + 3, -0.068, 0.043, 0.047)
+
+def deliver(first):
+    pick_tool("gripper")
+    a = take_housing()
+    axis("clamp0", 0)
+    axis("clamp1", 0)
+    hold(0.25)
+    lift(0.308, a)
+    tray = "output_tray0"
+    p = point(tray, [0, 0, 0.00504])
+    yaw = state()["yaw"] + pose(tray)["yaw"] - pose("housing0")["yaw"]
+    place_part("housing0", up(p, 0.007), yaw, 0.045)
+    delta = sub(p, xyz("housing0"))
+    move(add(state()["command"], delta), yaw, 0.018, 0.20)
+    trim("housing0", p, yaw)
+    coil("grasp_housing0", False)
+    jaws(-0.002)
+    hold(0.20)
+    lift(0.335, yaw)
+    park_tool("gripper")
+    move_to([0, 0.340, 0.430], 0)
+    hold(0.20)
+    if not touch("geom/output_tray0_floor", "body/housing0"):
+        fail("Missing housing support on output tray")
+    final_measurements(first)
+    p = xyz("port")
+    if norm(sub(p, [0, 0.340, 0.430])) > 0.0015:
+        fail("Arm did not reach park")
+    encoder("clamp0")
+    encoder("clamp1")
+    return state()
+
+def run():
+    pick_tool("gripper")
+    load_fixture()
+    close_lid(0)
+    return deliver(0)
