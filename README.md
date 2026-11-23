@@ -27,7 +27,7 @@ The original programs passed 18 of 20 scored runs. A passed 8/10 and B passed 10
 - [First lid screw · original failure, T04-18-A · 3.8 s](media/original-a-first-screw-fail.mp4)
 - [Last lid screw · original failure, T04-20-A · 3.8 s](media/original-a-last-screw-fail.mp4)
 
-Watch the close-up on the right. About halfway through each clip the screw makes little visible progress, then starts moving again. The last frame captures the stop. The [independent measurements](evidence/README.md#the-two-matched-setups) show how far the driver and screw turned and how much gap remained under each screw head.
+Watch the close-up on the right. About 1.4 seconds into each clip the screw makes little visible progress, then starts moving again. The last frame captures the stop. The [independent measurements](evidence/README.md#the-two-matched-setups) show how far the driver and screw turned and how much gap remained under each screw head.
 
 Watching the bit spin looked like watching the screw go in, until it wasn’t. The original routine advanced the arm according to how far the driver turned. Those two things usually tracked each other. During slip, they didn’t. The test showed where that assumption broke. The underlying cause of every slowdown is still open.
 
