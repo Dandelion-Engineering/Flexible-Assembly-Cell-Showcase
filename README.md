@@ -1,8 +1,10 @@
 # Flexible Assembly Cell
 
-Here is an interesting one! I gave Codex (OpenAI’s standard coding agent) access to the low level commands and sensor readings of a simulated robot arm and put it in a simulated assembly environment. I had it build two different automations using those commands and sensor readings. The point wasn’t for Codex to control the robot continuously but for the automations it builds to be able to run the assembly without it.
+Here is another interesting one for engineers! Could Codex (OpenAI’s standard coding agent) write assembly routines that a simulated robot arm could run on its own?
 
-We ran 20 jobs across both automations. All passed except two on the same automation variant. Turns out Codex decided how much to push the driver down based on how much the driver itself turned. It then checked if the screw was in place. But the simulated physics allowed for slippage between the driver and the screw and Codex did not account for that. Codex had implemented a time limit for this routine. Because of the slippage in these two tests the time limit was reached before the screw placement was verified and it declared a fail.
+I gave Codex access to the low level commands and sensor readings and put it in a simulated assembly environment. I had it build two different automations using those commands and sensor readings. The point wasn’t for Codex to control the robot continuously but for the automations it builds to be able to run the assembly without it.
+
+We ran 20 jobs across both automations Codex built. All passed except two on the same automation variant. Turns out Codex decided how much to push the driver down based on how much the driver itself turned. It then checked if the screw was in place. But the simulated physics allowed for slippage between the driver and the screw and Codex did not account for that. Codex had implemented a time limit for this routine. Because of the slippage in these two tests the time limit was reached before the screw placement was verified and it declared a fail.
 
 I described the failure to Codex but I did not suggest a fix. It found that both automations allowed for the same failure. It then implemented a fix where it tracks the spinning and movement of the actual screw and adjusts the driver if slippage is detected. The fixed automations then passed 20/20 tests each.
 
